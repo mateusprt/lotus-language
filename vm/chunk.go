@@ -1,13 +1,22 @@
 package vm
 
 const (
-	OP_RETURN = iota
+	OP_CONSTANT = iota
+	OP_RETURN
 )
 
 type Chunk struct {
-	Code []uint8
+	Code      []uint8
+	Constants []Value
+	lines     []int
 }
 
-func WriteChunk(c *Chunk, instruction uint8) {
+func WriteChunk(c *Chunk, instruction uint8, line int) {
 	c.Code = append(c.Code, instruction)
+	c.lines = append(c.lines, line)
+}
+
+func AddConstant(c *Chunk, value Value) int {
+	c.Constants = append(c.Constants, value)
+	return len(c.Constants) - 1
 }
