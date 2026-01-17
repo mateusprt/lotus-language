@@ -10,6 +10,11 @@ func DisassembleChunk(c *Chunk, name string) {
 }
 
 func disassembleInstruction(c *Chunk, offset int) int {
+	if offset > 0 && c.lines[offset] == c.lines[offset-1] {
+		fmt.Printf("   | ")
+	} else {
+		fmt.Printf("%4d ", c.lines[offset])
+	}
 	instruction := c.Code[offset]
 	switch instruction {
 	case OP_RETURN:

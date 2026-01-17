@@ -11,8 +11,9 @@ type Chunk struct {
 	lines     []int
 }
 
-func WriteChunk(c *Chunk, instruction uint8) {
+func WriteChunk(c *Chunk, instruction uint8, line int) {
 	c.Code = append(c.Code, instruction)
+	c.lines = append(c.lines, line)
 }
 
 func AddConstant(c *Chunk, value Value) int {
