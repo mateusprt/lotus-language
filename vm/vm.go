@@ -25,11 +25,12 @@ func initVM(chunk *Chunk) *VM {
 }
 
 func run(vm *VM) InterpretResult {
+	DisassembleChunk(vm.Chunk, "code")
 	for {
 		readByte(vm)
 		switch vm.Chunk.Code[vm.InstructionPointer] {
 		case OP_CONSTANT:
-			var constant Value = vm.Chunk.Constants[vm.InstructionPointer]
+			var constant Value = readConstant(vm)
 			fmt.Println(constant)
 		case OP_RETURN:
 			return INTERPRET_OK
@@ -41,4 +42,8 @@ func run(vm *VM) InterpretResult {
 
 func readByte(vm *VM) {
 	vm.InstructionPointer++
+}
+
+func readConstant(vm *VM) Value {
+	return vm.Chunk.Constants[vm.InstructionPointer]
 }
