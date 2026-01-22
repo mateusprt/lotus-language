@@ -21,7 +21,6 @@ type VM struct {
 	Chunk              *Chunk
 	InstructionPointer int
 	Stack              *data_structures.Stack[Value]
-	StackTop           Value
 }
 
 func Interpret(chunk *Chunk) InterpretResult {
@@ -32,26 +31,31 @@ func Interpret(chunk *Chunk) InterpretResult {
 func initVM(chunk *Chunk) *VM {
 	return &VM{
 		Chunk:              chunk,
-		InstructionPointer: -1,
+		InstructionPointer: 0,
 		Stack:              utils.NewStack[Value](STACK_MAX),
 	}
 }
 
 func run(vm *VM) InterpretResult {
-	fmt.Println("          ")
-	for slot := 0; slot < len(vm.Stack.Elements); slot++ {
-		fmt.Printf("[ ")
-		fmt.Printf("%v", vm.Stack.Elements[slot])
-		fmt.Printf(" ]")
-	}
-	DisassembleChunk(vm.Chunk, "code")
 	for {
-		readByte(vm)
-		switch vm.Chunk.Code[vm.InstructionPointer] {
+		current_instruction := readByte(vm)
+		switch current_instruction {
 		case OP_CONSTANT:
-			var constant Value = readConstant(vm)
-			vm.Stack.Push(constant)
+			vm.Stack.Push(readConstant(vm))
+		case OP_ADD:
+			binaryOP(vm, "+")
+		case OP_SUBTRACT:
+			binaryOP(vm, "-")
+		case OP_MULTIPLY:
+			binaryOP(vm, "*")
+		case OP_DIVIDE:
+			binaryOP(vm, "/")
+		case OP_NEGATE:
+			value, _ := vm.Stack.Pop()
+			vm.Stack.Push(-value)
 		case OP_RETURN:
+			lastValueOnStack, _ := vm.Stack.Pop()
+			fmt.Println(lastValueOnStack)
 			return INTERPRET_OK
 		default:
 			return INTERPRET_RUNTIME_ERROR
@@ -59,10 +63,30 @@ func run(vm *VM) InterpretResult {
 	}
 }
 
-func readByte(vm *VM) {
+func readByte(vm *VM) uint8 {
+	instruction := vm.Chunk.Code[vm.InstructionPointer]
 	vm.InstructionPointer++
+	return instruction
 }
 
 func readConstant(vm *VM) Value {
-	return vm.Chunk.Constants[vm.InstructionPointer]
+	constantIndex := readByte(vm)
+	return vm.Chunk.Constants[constantIndex]
+}
+
+func binaryOP(vm *VM, operator string) {
+	b, _ := vm.Stack.Pop()
+	a, _ := vm.Stack.Pop()
+	var result Value
+	switch operator {
+	case "+":
+		result = a + b
+	case "-":
+		result = a - b
+	case "*":
+		result = a * b
+	case "/":
+		result = a / b
+	}
+	vm.Stack.Push(result)
 }
