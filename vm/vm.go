@@ -21,7 +21,6 @@ type VM struct {
 	Chunk              *Chunk
 	InstructionPointer int
 	Stack              *data_structures.Stack[Value]
-	StackTop           Value
 }
 
 func Interpret(chunk *Chunk) InterpretResult {
@@ -32,15 +31,15 @@ func Interpret(chunk *Chunk) InterpretResult {
 func initVM(chunk *Chunk) *VM {
 	return &VM{
 		Chunk:              chunk,
-		InstructionPointer: -1,
+		InstructionPointer: 0,
 		Stack:              utils.NewStack[Value](STACK_MAX),
 	}
 }
 
 func run(vm *VM) InterpretResult {
 	for {
-		readByte(vm)
-		switch vm.Chunk.Code[vm.InstructionPointer] {
+		current_instruction := readByte(vm)
+		switch current_instruction {
 		case OP_CONSTANT:
 			vm.Stack.Push(readConstant(vm))
 		case OP_ADD:
@@ -64,12 +63,15 @@ func run(vm *VM) InterpretResult {
 	}
 }
 
-func readByte(vm *VM) {
+func readByte(vm *VM) uint8 {
+	instruction := vm.Chunk.Code[vm.InstructionPointer]
 	vm.InstructionPointer++
+	return instruction
 }
 
 func readConstant(vm *VM) Value {
-	return vm.Chunk.Constants[vm.InstructionPointer]
+	constantIndex := readByte(vm)
+	return vm.Chunk.Constants[constantIndex]
 }
 
 func binaryOP(vm *VM, operator string) {
