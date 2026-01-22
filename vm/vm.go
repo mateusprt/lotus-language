@@ -38,20 +38,18 @@ func initVM(chunk *Chunk) *VM {
 }
 
 func run(vm *VM) InterpretResult {
-	fmt.Println("          ")
-	for slot := 0; slot < len(vm.Stack.Elements); slot++ {
-		fmt.Printf("[ ")
-		fmt.Printf("%v", vm.Stack.Elements[slot])
-		fmt.Printf(" ]")
-	}
-	DisassembleChunk(vm.Chunk, "code")
 	for {
 		readByte(vm)
 		switch vm.Chunk.Code[vm.InstructionPointer] {
 		case OP_CONSTANT:
 			var constant Value = readConstant(vm)
 			vm.Stack.Push(constant)
+		case OP_NEGATE:
+			value, _ := vm.Stack.Pop()
+			vm.Stack.Push(-value)
 		case OP_RETURN:
+			lastValueOnStack, _ := vm.Stack.Pop()
+			fmt.Println(lastValueOnStack)
 			return INTERPRET_OK
 		default:
 			return INTERPRET_RUNTIME_ERROR

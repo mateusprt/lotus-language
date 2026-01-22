@@ -17,6 +17,8 @@ func disassembleInstruction(c *Chunk, offset int) int {
 	}
 	instruction := c.Code[offset]
 	switch instruction {
+	case OP_NEGATE:
+		return simpleInstruction("OP_NEGATE", offset)
 	case OP_RETURN:
 		return simpleInstruction("OP_RETURN", offset)
 	case OP_CONSTANT:
@@ -37,4 +39,13 @@ func constantInstruction(name string, chunk *Chunk, offset int) int {
 	fmt.Printf("%-16s %4d ", name, constant)
 	fmt.Printf("'%v'\n", chunk.Constants[constant])
 	return offset + 1
+}
+
+func ShowStackTracing(vm *VM) {
+	fmt.Println("          ")
+	fmt.Println(len(vm.Stack.Elements))
+	for slot := 0; slot < len(vm.Stack.Elements); slot++ {
+		fmt.Printf("[%v]\n", vm.Stack.Elements[slot])
+	}
+	DisassembleChunk(vm.Chunk, "code")
 }

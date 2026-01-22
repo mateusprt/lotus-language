@@ -2,6 +2,7 @@ package vm
 
 const (
 	OP_CONSTANT = iota
+	OP_NEGATE
 	OP_RETURN
 )
 
