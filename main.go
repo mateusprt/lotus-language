@@ -1,31 +1,24 @@
 package main
 
 import (
-	"github.com/mateusprt/lox-language/vm"
+	"fmt"
+	"os"
+
+	"github.com/mateusprt/lox-language/cmd"
 )
 
 func main() {
-	virtual_machine := vm.InitVM()
 
-	var constant int = vm.AddConstant(virtual_machine.Chunk, 2)
-	vm.WriteChunk(virtual_machine.Chunk, vm.OP_CONSTANT, 123)
-	vm.WriteChunk(virtual_machine.Chunk, uint8(constant), 123)
+	if len(os.Args) == 1 {
+		cmd.Repl()
+		return
+	}
 
-	constant = vm.AddConstant(virtual_machine.Chunk, 2)
-	vm.WriteChunk(virtual_machine.Chunk, vm.OP_CONSTANT, 123)
-	vm.WriteChunk(virtual_machine.Chunk, uint8(constant), 123)
+	if len(os.Args) == 2 {
+		cmd.RunFile(os.Args[1])
+		return
+	}
 
-	vm.WriteChunk(virtual_machine.Chunk, vm.OP_ADD, 123)
-
-	constant = vm.AddConstant(virtual_machine.Chunk, 2)
-	vm.WriteChunk(virtual_machine.Chunk, vm.OP_CONSTANT, 123)
-	vm.WriteChunk(virtual_machine.Chunk, uint8(constant), 123)
-
-	vm.WriteChunk(virtual_machine.Chunk, vm.OP_DIVIDE, 123)
-	vm.WriteChunk(virtual_machine.Chunk, vm.OP_RETURN, 123)
-
-	vm.Interpret(virtual_machine, virtual_machine.Chunk)
-
-	vm.DisassembleChunk(virtual_machine.Chunk, "DEBUG")
-
+	fmt.Println("Usage: lotues [path]")
+	os.Exit(64)
 }
