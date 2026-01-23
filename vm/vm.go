@@ -23,17 +23,17 @@ type VM struct {
 	Stack              *data_structures.Stack[Value]
 }
 
-func Interpret(chunk *Chunk) InterpretResult {
-	vm := initVM(chunk)
-	return run(vm)
-}
-
-func initVM(chunk *Chunk) *VM {
+func InitVM() *VM {
 	return &VM{
-		Chunk:              chunk,
+		Chunk:              &Chunk{},
 		InstructionPointer: 0,
 		Stack:              utils.NewStack[Value](STACK_MAX),
 	}
+}
+
+func Interpret(vm *VM, chunk *Chunk) InterpretResult {
+	vm.Chunk = chunk
+	return run(vm)
 }
 
 func run(vm *VM) InterpretResult {

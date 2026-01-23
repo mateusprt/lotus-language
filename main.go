@@ -5,26 +5,27 @@ import (
 )
 
 func main() {
-	var chunk vm.Chunk
+	virtual_machine := vm.InitVM()
 
-	var constant int = vm.AddConstant(&chunk, 2)
-	vm.WriteChunk(&chunk, vm.OP_CONSTANT, 123)
-	vm.WriteChunk(&chunk, uint8(constant), 123)
+	var constant int = vm.AddConstant(virtual_machine.Chunk, 2)
+	vm.WriteChunk(virtual_machine.Chunk, vm.OP_CONSTANT, 123)
+	vm.WriteChunk(virtual_machine.Chunk, uint8(constant), 123)
 
-	constant = vm.AddConstant(&chunk, 2)
-	vm.WriteChunk(&chunk, vm.OP_CONSTANT, 123)
-	vm.WriteChunk(&chunk, uint8(constant), 123)
+	constant = vm.AddConstant(virtual_machine.Chunk, 2)
+	vm.WriteChunk(virtual_machine.Chunk, vm.OP_CONSTANT, 123)
+	vm.WriteChunk(virtual_machine.Chunk, uint8(constant), 123)
 
-	vm.WriteChunk(&chunk, vm.OP_ADD, 123)
+	vm.WriteChunk(virtual_machine.Chunk, vm.OP_ADD, 123)
 
-	constant = vm.AddConstant(&chunk, 2)
-	vm.WriteChunk(&chunk, vm.OP_CONSTANT, 123)
-	vm.WriteChunk(&chunk, uint8(constant), 123)
+	constant = vm.AddConstant(virtual_machine.Chunk, 2)
+	vm.WriteChunk(virtual_machine.Chunk, vm.OP_CONSTANT, 123)
+	vm.WriteChunk(virtual_machine.Chunk, uint8(constant), 123)
 
-	vm.WriteChunk(&chunk, vm.OP_DIVIDE, 123)
-	vm.WriteChunk(&chunk, vm.OP_RETURN, 123)
+	vm.WriteChunk(virtual_machine.Chunk, vm.OP_DIVIDE, 123)
+	vm.WriteChunk(virtual_machine.Chunk, vm.OP_RETURN, 123)
 
-	vm.Interpret(&chunk)
+	vm.Interpret(virtual_machine, virtual_machine.Chunk)
 
-	vm.DisassembleChunk(&chunk, "DEBUG")
+	vm.DisassembleChunk(virtual_machine.Chunk, "DEBUG")
+
 }
